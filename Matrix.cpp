@@ -113,6 +113,7 @@ bool Matrix::isSquare()const
 
 ostream& operator<<(ostream& os,const Matrix& mat)
 {
+	cout.setf(ios::fixed,ios::floatfield);
 	if (mat.m_filled)
 	{
 		cout << mat.m_r << " * " << mat.m_c << endl;
@@ -120,7 +121,7 @@ ostream& operator<<(ostream& os,const Matrix& mat)
 		{
 			for (int j = 0; j < mat.m_c; j++)
 			{
-				os << setw(ELM_WIDTH) << (ISZERO(mat.getElm(i, j)) ? 0 : mat.getElm(i, j));
+				os <<setprecision(ELM_PRECISION)<< setw(ELM_WIDTH) << (ISZERO(mat.getElm(i, j)) ? 0 : mat.getElm(i, j));
 			}
 			os << endl;
 		}
@@ -318,13 +319,13 @@ double Matrix::det()const
 	double k = 1;
 	for (int i = 0; i < m_r; i++)
 	{
-		max = fabs(tmp.m_elm[getIndex(i, i)]);
+		max = abs(tmp.m_elm[getIndex(i, i)]);
 		maxRow = i;
 		for (int j = i + 1; j < m_r; j++)
 		{
-			if (fabs(tmp.m_elm[getIndex(j, i)]) > max)
+			if (abs(tmp.m_elm[getIndex(j, i)]) > max)
 			{
-				max = fabs(tmp.m_elm[getIndex(j, i)]);
+				max = abs(tmp.m_elm[getIndex(j, i)]);
 				maxRow = j;
 			}
 		}
@@ -375,13 +376,13 @@ bool Matrix::PALUfact(Matrix& P, Matrix& L, Matrix& U)const
 
 	for (int i = 0; i < m_r; i++)
 	{
-		max = fabs(tmpU.m_elm[getIndex(i, i)]);
+		max = abs(tmpU.m_elm[getIndex(i, i)]);
 		maxRow = i;
 		for (int j = i + 1; j < m_r; j++)
 		{
-			if (fabs(tmpU.m_elm[getIndex(j, i)]) > max)
+			if (abs(tmpU.m_elm[getIndex(j, i)]) > max)
 			{
-				max = fabs(tmpU.m_elm[getIndex(j, i)]);
+				max = abs(tmpU.m_elm[getIndex(j, i)]);
 				maxRow = j;
 			}
 		}
@@ -590,7 +591,7 @@ double Matrix::MatrixNorm()const
 		double s = 0;
 		for (int j = 0; j < m_c; j++)
 		{
-			s += fabs(getElm(i, j));
+			s += abs(getElm(i, j));
 		}
 		if (s > max)
 			max = s;
@@ -1171,7 +1172,7 @@ void Matrix::QRmethod(Matrix& LAM, double accu, double maxStep) const
 			max = 0;
 			for (int i = 0; i < n - 1; i++)
 			{
-				x = fabs(A.elm(n - 1, i));
+				x = abs(A.elm(n - 1, i));
 				if (x > max)
 					max = x;
 			}
@@ -1243,11 +1244,30 @@ void Matrix::eigVec(double lam, Matrix& V, int x) const
 		V.normalizeCol(i);
 	}
 }
+void Matrix::symSVD(Matrix& U, Matrix& S, Matrix& V, double accu, double maxStep) const
+{
+	Matrix LAM;
+	symEig(LAM, V, accu, maxStep);
+	U = V;
+	Matrix tmpS(m_r, m_c);
+	for (int i = 0; i < m_r; i++)
+	{
+		if (LAM.m_elm[i] < 0)
+		{
+			tmpS.elm(i, i) = -LAM.m_elm[i];
+			U.multCol(i, -1);
+		}
+		else
+		{
+			tmpS.elm(i, i) = LAM.m_elm[i];
+		}
+	}
+	S = tmpS;
+}
 void Matrix::SVD(Matrix& U, Matrix& S, Matrix& V, double accu, double maxStep) const
 {
 	Matrix LAM;
 	(transpose(*this) * (*this)).symEig(LAM, V, accu, maxStep);
-
 	int l(0), r(LAM.m_r - 1);
 	while (l < r)
 	{
@@ -1262,24 +1282,25 @@ void Matrix::SVD(Matrix& U, Matrix& S, Matrix& V, double accu, double maxStep) c
 		}
 	}
 
+	int n(m_r < m_c ? m_r : m_c);
 	Matrix tmpS(m_r, m_c);
-	for (int i = 0; i < LAM.m_r; i++)
+	for (int i = 0; i < n; i++)
 	{
 		tmpS.elm(i, i) = sqrt(LAM.m_elm[i]);
 	}
 	S = tmpS;
-	U = (*this) * V;
-	for (int i = 0; i < LAM.m_r; i++)
+
+	Matrix tmpU = (*this) * V;
+	for (int i = 0; i < n; i++)
 	{
 		if (!ISZERO(S.elm(i, i)))
 		{
-			U.multCol(i, 1.0 / S.elm(i, i));
+			tmpU.multCol(i, 1.0 / S.elm(i, i));
 		}
 	}
-
-	Matrix Q, R;
-	U.QRfactWithHouseholder(Q, R);
-	U = Q;
+	tmpU = tmpU.subMat(0, m_r - 1, 0, m_r - 1);
+	Matrix R;
+	tmpU.QRfactWithHouseholder(U, R);
 }
 const Matrix Matrix::subMat(int u, int d, int l, int r) const
 {

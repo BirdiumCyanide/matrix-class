@@ -2,11 +2,13 @@
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
+#include <cmath>
+#define ELM_PRECISION 6
 #define ELM_WIDTH 12
-#define EPSILON 1e-10
-#define ACCURACY 1e-10
-#define MAX_STEP 32
-#define ISZERO(X) fabs(X)<EPSILON 
+#define EPSILON 1e-12
+#define ACCURACY 1e-12
+#define MAX_STEP 128
+#define ISZERO(X) abs(X)<EPSILON 
 using namespace std;
 class Matrix
 {
@@ -114,6 +116,7 @@ public:
 	void eigVec(double lam, Matrix& V, int x = 0) const;
 
 	void SVD(Matrix& U, Matrix& S, Matrix& V, double accu = ACCURACY, double maxStep = MAX_STEP) const;
+	void symSVD(Matrix& U, Matrix& S, Matrix& V, double accu = ACCURACY, double maxStep = MAX_STEP) const;
 	friend const Matrix colCombine(const Matrix& A, const Matrix& B);
 };
 
