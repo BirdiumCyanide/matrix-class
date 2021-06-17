@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cmath>
 #define ELM_PRECISION 4
-#define ELM_WIDTH 12
+#define ELM_WIDTH 10
 #define EPSILON 1e-12
 #define ACCURACY 1e-10
 #define MAX_STEP 32
@@ -110,13 +110,13 @@ public:
 
 	void toUpperHessenberg(Matrix& Q, Matrix& B) const;
 	void shrink(int x);
-	void QRmethod(Matrix& LAM, double accu = ACCURACY, double maxStep = MAX_STEP) const;
-	void symEig(Matrix& LAM, Matrix& Q, double accu = ACCURACY, double maxStep = MAX_STEP) const;
-	void eig(Matrix& LAM, double accu = ACCURACY, double maxStep = MAX_STEP) const;
+	void QRmethod(Matrix& LAM, double accu = ACCURACY, int maxStep = MAX_STEP) const;
+	void symEig(Matrix& LAM, Matrix& Q, double accu = ACCURACY, int maxStep = MAX_STEP) const;
+	void eig(Matrix& LAM, double accu = ACCURACY, int maxStep = MAX_STEP) const;
 	void eigVec(double lam, Matrix& V, int x = 0) const;
 
-	void SVD(Matrix& U, Matrix& S, Matrix& V, double accu = ACCURACY, double maxStep = MAX_STEP) const;
-	void symSVD(Matrix& U, Matrix& S, Matrix& V, double accu = ACCURACY, double maxStep = MAX_STEP) const;
+	void SVD(Matrix& U, Matrix& S, Matrix& V, double accu = ACCURACY, int maxStep = MAX_STEP) const;
+	void symSVD(Matrix& U, Matrix& S, Matrix& V, double accu = ACCURACY, int maxStep = MAX_STEP) const;
 	friend const Matrix colCombine(const Matrix& A, const Matrix& B);
 };
 

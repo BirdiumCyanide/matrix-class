@@ -1156,7 +1156,7 @@ void Matrix::shrink(int x)
 			tmp.elm(i, j) = elm(i, j);
 	*this = tmp;
 }
-void Matrix::QRmethod(Matrix& LAM, double accu, double maxStep) const
+void Matrix::QRmethod(Matrix& LAM, double accu, int maxStep) const
 {
 	int n(m_r);
 	int count;
@@ -1213,7 +1213,7 @@ void Matrix::QRmethod(Matrix& LAM, double accu, double maxStep) const
 		tmpLAM.elm(0, 0) = A.elm(0, 0);
 	LAM = tmpLAM;
 }
-void Matrix::symEig(Matrix& LAM, Matrix& Q, double accu, double maxStep) const
+void Matrix::symEig(Matrix& LAM, Matrix& Q, double accu, int maxStep) const
 {
 	Matrix P = identityMat(m_r), R = *this, T;
 	Q = P;
@@ -1228,7 +1228,7 @@ void Matrix::symEig(Matrix& LAM, Matrix& Q, double accu, double maxStep) const
 		L.m_elm[i] = T.elm(i, i);
 	LAM = L;
 }
-void Matrix::eig(Matrix& LAM, double accu, double maxStep) const
+void Matrix::eig(Matrix& LAM, double accu, int maxStep) const
 {
 	Matrix Q, B;
 	toUpperHessenberg(Q, B);
@@ -1244,7 +1244,7 @@ void Matrix::eigVec(double lam, Matrix& V, int x) const
 		V.normalizeCol(i);
 	}
 }
-void Matrix::symSVD(Matrix& U, Matrix& S, Matrix& V, double accu, double maxStep) const
+void Matrix::symSVD(Matrix& U, Matrix& S, Matrix& V, double accu, int maxStep) const
 {
 	Matrix LAM;
 	symEig(LAM, V, accu, maxStep);
@@ -1264,7 +1264,7 @@ void Matrix::symSVD(Matrix& U, Matrix& S, Matrix& V, double accu, double maxStep
 	}
 	S = tmpS;
 }
-void Matrix::SVD(Matrix& U, Matrix& S, Matrix& V, double accu, double maxStep) const
+void Matrix::SVD(Matrix& U, Matrix& S, Matrix& V, double accu, int maxStep) const
 {
 	Matrix LAM;
 	(transpose(*this) * (*this)).symEig(LAM, V, accu, maxStep);
