@@ -1,2 +1,2 @@
 # matrix-class
-Implemented some matrix algorithms in numerical analysis.
+Implemented matrix algorithms in numerical analysis.
