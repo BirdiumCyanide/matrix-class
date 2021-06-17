@@ -3,11 +3,11 @@
 #include <iomanip>
 #include <cstdlib>
 #include <cmath>
-#define ELM_PRECISION 6
+#define ELM_PRECISION 4
 #define ELM_WIDTH 12
 #define EPSILON 1e-12
-#define ACCURACY 1e-12
-#define MAX_STEP 128
+#define ACCURACY 1e-10
+#define MAX_STEP 32
 #define ISZERO(X) abs(X)<EPSILON 
 using namespace std;
 class Matrix
